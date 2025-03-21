@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Message;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
@@ -102,5 +103,10 @@ class UserController extends BaseController
         $user->save();
 
         return $user;
+    }
+
+    public function showMessages(Request $request)
+    {
+        return $request->user()->messages;
     }
 }

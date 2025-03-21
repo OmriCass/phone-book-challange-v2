@@ -45,7 +45,7 @@ export class ApiService {
   }
 
   updatePassword(currentPassword: string, newPassword: string, confirmPassword: string): Observable<boolean> {
-    return this.http.put<any>(this.apiUrl + 'updateMyPassword', { currentPassword, newPassword, confirmPassword }).pipe(
+    return this.http.put<any>(this.apiUrl + 'updatePassword', { currentPassword, newPassword, confirmPassword }).pipe(
       tap((response: any) => {
         if (response && response.token) {
           localStorage.setItem('token', response.token);
@@ -55,6 +55,20 @@ export class ApiService {
           return false;
         }
       })
+    );
+  }
+
+  showMessage(currentUser: string): Observable<any> {
+    return this.http.get<any>(this.apiUrl + 'showMessages', { params: { currentUser } }).pipe(
+      tap((response: any) => {
+        if (response && response.token) {
+          localStorage.setItem('token', response.token);
+          localStorage.setItem('user', JSON.stringify(response.user));
+          return true;
+        } else {
+          return false;
+        }
+      })  
     );
   }
 
