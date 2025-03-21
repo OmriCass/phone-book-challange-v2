@@ -30,6 +30,34 @@ export class ApiService {
     );
   }
 
+  updateProfile(name: string, email: string): Observable<boolean> {
+    return this.http.put<any>(this.apiUrl + 'updateMe', { name, email }).pipe(
+      tap((response: any) => {
+        if (response && response.token) {
+          localStorage.setItem('token', response.token);
+          localStorage.setItem('user', JSON.stringify(response.user));
+          return true;
+        } else {
+          return false;
+        }
+      })
+    );
+  }
+
+  updatePassword(currentPassword: string, newPassword: string, confirmPassword: string): Observable<boolean> {
+    return this.http.put<any>(this.apiUrl + 'updateMyPassword', { currentPassword, newPassword, confirmPassword }).pipe(
+      tap((response: any) => {
+        if (response && response.token) {
+          localStorage.setItem('token', response.token);
+          localStorage.setItem('user', JSON.stringify(response.user));
+          return true;
+        } else {
+          return false;
+        }
+      })
+    );
+  }
+
   getContacts(): Observable<Contact[]> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);

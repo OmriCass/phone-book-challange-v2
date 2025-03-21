@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
+import { Router } from '@angular/router';
+import { catchError, tap } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-profile-management',
@@ -13,7 +16,7 @@ export class ProfileManagementComponent implements OnInit {
   public updateMyProfileForm!: FormGroup;
   public updatePasswordForm!: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private apiService: ApiService) { }
+  constructor(private formBuilder: FormBuilder, private apiService: ApiService, private router: Router) { }
 
   ngOnInit(): void {
     this.updateMyProfileForm = this.formBuilder.group({
@@ -28,10 +31,40 @@ export class ProfileManagementComponent implements OnInit {
   }
 
   updateProfile(): void {
-    throw new Error('Not implemented');
+    if (this.updateMyProfileForm?.valid) {
+      this.apiService.updateProfile(this.updateMyProfileForm.value.name, this.updateMyProfileForm.value.email).pipe(
+        tap((success) => {
+          if (success) {
+            console.log('Profile updated');
+            this.router.navigate(['/']);
+          } else {
+            console.error('Profile update failed');
+          }
+        }),
+        catchError((error) => {
+          console.error('An error occurred:', error);
+          return of(null);
+        })
+      ).subscribe();
+    }
   }
 
   updatePassword(): void {
-    throw new Error('Not implemented');
+   if (this.updatePasswordForm?.valid) {
+      this.apiService.updatePassword(this.updatePasswordForm.value.currentPassword, this.updatePasswordForm.value.newPassword, this.updatePasswordForm.value.confirmPassword).pipe(
+        tap((success) => {
+          if (success) {
+            console.log('Password updated');
+            this.router.navigate(['/']);
+          } else {
+            console.error('Password update failed');
+          }
+        }),
+        catchError((error) => {
+          console.error('An error occurred:', error);
+          return of(null);
+        })
+      ).subscribe();
+    }
   }
 }
